@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MixFinance</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>MixFinance</h1>
+    </header>
+    <main>
+        <section id="lucros">
+            <h2>Lucros</h2>
+            <ul id="lucro-list">
+                <!-- Itens da lista de lucros serão adicionados dinamicamente pelo JavaScript -->
+            </ul>
+            <button id="add-lucro-btn">Adicionar Lucro</button>
+        </section>
+
+        <section id="gastos">
+            <h2>Gastos</h2>
+            <ul id="gasto-list">
+                <!-- Itens da lista de gastos serão adicionados dinamicamente pelo JavaScript -->
+            </ul>
+            <button id="add-gasto-btn">Adicionar Despesa</button>
+        </section>
+
+        <div id="popup-adicionar">
+            <div class="popup-content">
+                <h2 id="popup-title">Adicionar Lucro</h2>
+                <input type="number" id="valor" placeholder="Valor" step="0.01" required>
+                <input type="text" id="descricao" placeholder="Descrição">
+                <button id="salvar-btn">Salvar</button>
+                <button id="cancelar-btn">Cancelar</button>
+            </div>
+        </div>
+
+        <div id="popup-confirmar">
+            <div class="popup-content">
+                <h2>Confirmar Exclusão</h2>
+                <p>Deseja realmente excluir este registro?</p>
+                <button id="confirmar-btn">Confirmar</button>
+                <button id="cancelar-exclusao-btn">Cancelar</button>
+            </div>
+        </div>
+
+        <div id="balanco">
+            <h2>Balanço Atual</h2>
+            <p id="balanco-valor">R$ 0.00</p>
+        </div>
+    </main>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
