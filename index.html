@@ -5,25 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MixFinance</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
         <h1>MixFinance</h1>
+        <div id="balanco">
+            <span>Balanço Atual:</span>
+            <span id="balanco-valor">R$ 0.00</span>
+        </div>
     </header>
     <main>
         <section id="lucros">
             <h2>Lucros</h2>
-            <ul id="lucro-list">
-                <!-- Itens da lista de lucros serão adicionados dinamicamente pelo JavaScript -->
-            </ul>
+            <ul id="lucro-list"></ul>
             <button id="add-lucro-btn">Adicionar Lucro</button>
         </section>
 
         <section id="gastos">
             <h2>Gastos</h2>
-            <ul id="gasto-list">
-                <!-- Itens da lista de gastos serão adicionados dinamicamente pelo JavaScript -->
-            </ul>
+            <ul id="gasto-list"></ul>
             <button id="add-gasto-btn">Adicionar Despesa</button>
         </section>
 
@@ -32,8 +33,8 @@
                 <h2 id="popup-title">Adicionar Lucro</h2>
                 <input type="number" id="valor" placeholder="Valor" step="0.01" required>
                 <input type="text" id="descricao" placeholder="Descrição">
-                <button id="salvar-btn">Salvar</button>
                 <button id="cancelar-btn">Cancelar</button>
+                <button id="salvar-btn">Salvar</button>
             </div>
         </div>
 
@@ -41,15 +42,39 @@
             <div class="popup-content">
                 <h2>Confirmar Exclusão</h2>
                 <p>Deseja realmente excluir este registro?</p>
-                <button id="confirmar-btn">Confirmar</button>
                 <button id="cancelar-exclusao-btn">Cancelar</button>
+                <button id="confirmar-btn">Confirmar</button>
             </div>
         </div>
 
-        <div id="balanco">
-            <h2>Balanço Atual</h2>
-            <p id="balanco-valor">R$ 0.00</p>
+        <div id="balanco-detalhado">
+            <h2>Balanço Detalhado</h2>
+            <p id="total-lucros">Total de Lucros: R$ 0.00</p>
+            <p id="total-gastos">Total de Gastos: R$ 0.00</p>
+            <p id="saldo">Saldo: <span id="saldo-valor">R$ 0.00</span></p>
         </div>
+
+        <section id="graficos">
+            <h2>Evolução das finanças</h2>
+            <canvas id="grafico-linha"></canvas>
+            <div id="graficodepizza">
+                <h2>Gráfico</h2>
+                <canvas id="grafico-pizza"></canvas>
+            </div>
+        </section>
+            <!-- Botão de restauração -->
+    <button id="restaurar-btn" class="restaurar">Restaurar MixFinance</button>
+</main>
+
+<!-- Pop-up de confirmação de restauração -->
+<div id="popup-restaurar" class="popup">
+    <div class="popup-content">
+        <h2>Restaurar MixFinance</h2>
+        <p>Você deseja restaurar o MixFinance? Todos os dados adicionados serão apagados.</p>
+        <button id="cancelar-restauracao-btn" class="cancelar">Cancelar</button>
+        <button id="confirmar-restauracao-btn" class="confirmar">Sim</button>
+    </div>
+</div>
     </main>
 
     <script src="scripts.js"></script>

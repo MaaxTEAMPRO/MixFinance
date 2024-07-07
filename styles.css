@@ -1,16 +1,26 @@
-/* styles.css */
+/* Resetação básica */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: 'Roboto', Arial, sans-serif;
-    background-color: #2c3e50; /* Cor de fundo original */
+    background-color: #2c3e50;
     color: #fff;
     margin: 0;
     padding: 0;
 }
 
+/* Estilo do header */
 header {
-    background-color: #3498db; /* Cor do cabeçalho */
-    text-align: center;
-    padding: 20px 0;
+    background-color: #3498db;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    flex-wrap: wrap;
 }
 
 header h1 {
@@ -19,6 +29,21 @@ header h1 {
     color: #fff;
 }
 
+#balanco {
+    display: flex;
+    align-items: center;
+}
+
+#balanco span {
+    font-size: 1.2em;
+}
+
+#balanco-valor {
+    font-size: 1.2em;
+    margin-left: 10px;
+}
+
+/* Estilo do main */
 main {
     display: flex;
     flex-direction: column;
@@ -26,8 +51,8 @@ main {
     padding: 20px;
 }
 
-section {
-    background-color: #34495e; /* Cor de fundo das seções */
+section, #balanco-detalhado {
+    background-color: #34495e;
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 8px;
@@ -35,7 +60,33 @@ section {
     max-width: 800px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     text-align: center;
-    color: #fff; /* Cor do texto das seções */
+    color: #fff;
+}
+
+#graficos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#graficos canvas {
+    max-width: 100%;
+    margin: 20px 0;
+}
+
+#graficodepizza {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#graficodepizza canvas {
+    width: 100% !important;
+    max-width: 100%;
+    height: auto !important;
 }
 
 section h2 {
@@ -66,7 +117,7 @@ ul {
 }
 
 li {
-    background-color: #2c3e50; /* Cor de fundo dos itens adicionados */
+    background-color: #2c3e50;
     margin: 10px 0;
     padding: 10px;
     border-radius: 5px;
@@ -75,11 +126,11 @@ li {
 }
 
 li:hover {
-    background-color: #34495e; /* Cor de fundo dos itens adicionados ao passar o mouse */
+    background-color: #34495e;
 }
 
-#popup-adicionar,
-#popup-confirmar {
+/* Popups */
+#popup-adicionar, #popup-confirmar {
     display: none;
     position: fixed;
     top: 0;
@@ -92,8 +143,8 @@ li:hover {
 }
 
 .popup-content {
-    background-color: #34495e; /* Cor de fundo da pop-up */
-    color: #fff; /* Cor do texto na pop-up */
+    background-color: #34495e;
+    color: #fff;
     padding: 20px;
     border-radius: 8px;
     width: 80%;
@@ -133,13 +184,13 @@ li:hover {
     background-color: #2980b9;
 }
 
-#balanco {
+#balanco-detalhado {
     text-align: center;
     margin-top: 20px;
 }
 
-#balanco-valor {
-    font-size: 2em;
+#total-lucros, #total-gastos, #saldo {
+    font-size: 1.2em;
     padding: 10px;
     border-radius: 5px;
     width: 100%;
@@ -148,21 +199,34 @@ li:hover {
     margin-right: auto;
 }
 
-#balanco-valor.positivo {
-    color: #2ecc71; /* Verde para valores positivos */
+#total-lucros {
+    color: #2ecc71; /* Verde para Total de Lucros */
 }
 
-#balanco-valor.negativo {
-    color: #e74c3c; /* Vermelho para valores negativos */
+#total-gastos {
+    color: #e74c3c; /* Vermelho para Total de Gastos */
 }
 
+#saldo {
+    color: #2ecc71; /* Verde por padrão para Saldo */
+}
+
+#saldo-valor {
+    font-weight: bold;
+}
+
+/* Estilos responsivos */
 @media (max-width: 768px) {
-    /* Estilos para dispositivos móveis */
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     main {
         padding: 10px;
     }
 
-    section {
+    section, #balanco-detalhado {
         padding: 15px;
     }
 
@@ -177,4 +241,73 @@ li:hover {
     .popup-content button {
         width: 100%;
     }
+}
+
+/* Estilo do botão de restauração */
+.restaurar {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.restaurar:hover {
+    background-color: #c0392b;
+}
+
+/* Estilo do pop-up de restauração */
+#popup-restaurar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background-color: #34495e;
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.popup-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.popup-content p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.popup-content .cancelar {
+    background-color: #3498db;
+    margin-right: 10px;
+}
+
+.popup-content .confirmar {
+    background-color: #e74c3c;
+}
+
+.popup-content .cancelar:hover {
+    background-color: #2980b9;
+}
+
+.popup-content .confirmar:hover {
+    background-color: #c0392b;
 }
