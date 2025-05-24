@@ -3,80 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MixFinance</title>
+    <title>MixFinance V3</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scripts.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>MixFinance</h1>
-        <div id="balanco">
-            <span>Balanço Atual:</span>
-            <span id="balanco-valor">R$ 0.00</span>
+    <header class="header">
+        <div class="logo">MixFinance V3</div>
+        <div class="balance-display">
+            <span>Saldo Atual:</span>
+            <div class="balance-value" id="currentBalance">R$ 0,00</div>
         </div>
     </header>
-    <main>
-        <section id="lucros">
-            <h2>Lucros</h2>
-            <ul id="lucro-list"></ul>
-            <button id="add-lucro-btn">Adicionar Lucro</button>
-        </section>
-
-        <section id="gastos">
-            <h2>Gastos</h2>
-            <ul id="gasto-list"></ul>
-            <button id="add-gasto-btn">Adicionar Despesa</button>
-        </section>
-
-        <div id="popup-adicionar">
-            <div class="popup-content">
-                <h2 id="popup-title">Adicionar Lucro</h2>
-                <input type="number" id="valor" placeholder="Valor" step="0.01" required>
-                <input type="text" id="descricao" placeholder="Descrição">
-                <button id="cancelar-btn">Cancelar</button>
-                <button id="salvar-btn">Salvar</button>
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+        <button class="nav-tab" data-tab="transactions">Transações</button>
+        <button class="nav-tab" data-tab="categories">Categorias</button>
+        <button class="nav-tab" data-tab="reserves">Reservas</button>
+        <button class="nav-tab" data-tab="reports">Relatórios</button>
+        <button class="nav-tab" data-tab="settings">Configurações</button>
+    </nav>
+    <main class="main-content">
+        <div class="tab-content active" id="dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: var(--success)" id="totalIncome">R$ 0,00</div>
+                    <div class="stat-label">Receitas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: var(--danger)" id="totalExpenses">R$ 0,00</div>
+                    <div class="stat-label">Despesas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="monthlyBalance">R$ 0,00</div>
+                    <div class="stat-label">Saldo do Mês</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: var(--warning)" id="totalReserves">R$ 0,00</div>
+                    <div class="stat-label">Total Reservas</div>
+                </div>
+            </div>
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3 class="card-title">Visão Geral Financeira</h3>
+                    <div class="chart-container">
+                        <canvas id="overviewChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Gastos por Categoria</h3>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Evolução Mensal</h3>
+                <div class="chart-container large">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Transações Recentes</h3>
+                <div class="transaction-list" id="recentTransactions"></div>
             </div>
         </div>
-
-        <div id="popup-confirmar">
-            <div class="popup-content">
-                <h2>Confirmar Exclusão</h2>
-                <p>Deseja realmente excluir este registro?</p>
-                <button id="cancelar-exclusao-btn">Cancelar</button>
-                <button id="confirmar-btn">Confirmar</button>
+        <div class="tab-content" id="transactions">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 class="card-title" style="margin: 0;">Minhas Transações</h3>
+                    <div>
+                        <button class="btn btn-success" onclick="openTransactionModal('income')">+ Receita</button>
+                        <button class="btn btn-danger" onclick="openTransactionModal('expense')">+ Despesa</button>
+                    </div>
+                </div>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label class="form-label">Período:</label>
+                        <select class="form-select" id="periodFilter" onchange="filterTransactions()">
+                            <option value="all">Todos</option>
+                            <option value="thisMonth">Este Mês</option>
+                            <option value="lastMonth">Mês Passado</option>
+                            <option value="thisYear">Este Ano</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="form-label">Categoria:</label>
+                        <select class="form-select" id="categoryFilter" onchange="filterTransactions()">
+                            <option value="all">Todas</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="form-label">Tipo:</label>
+                        <select class="form-select" id="typeFilter" onchange="filterTransactions()">
+                            <option value="all">Todos</option>
+                            <option value="income">Receitas</option>
+                            <option value="expense">Despesas</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="transaction-list" id="allTransactions"></div>
             </div>
         </div>
-
-        <div id="balanco-detalhado">
-            <h2>Balanço Detalhado</h2>
-            <p id="total-lucros">Total de Lucros: R$ 0.00</p>
-            <p id="total-gastos">Total de Gastos: R$ 0.00</p>
-            <p id="saldo">Saldo: <span id="saldo-valor">R$ 0.00</span></p>
-        </div>
-
-        <section id="graficos">
-            <h2>Evolução das finanças</h2>
-            <canvas id="grafico-linha"></canvas>
-            <div id="graficodepizza">
-                <h2>Gráfico</h2>
-                <canvas id="grafico-pizza"></canvas>
+        <div class="tab-content" id="categories">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 class="card-title" style="margin: 0;">Categorias</h3>
+                    <button class="btn" onclick="openCategoryModal()">+ Nova Categoria</button>
+                </div>
+                <div class="grid grid-3" id="categoriesList"></div>
             </div>
-        </section>
-            <!-- Botão de restauração -->
-    <button id="restaurar-btn" class="restaurar">Restaurar MixFinance</button>
-</main>
-
-<!-- Pop-up de confirmação de restauração -->
-<div id="popup-restaurar" class="popup">
-    <div class="popup-content">
-        <h2>Restaurar MixFinance</h2>
-        <p>Você deseja restaurar o MixFinance? Todos os dados adicionados serão apagados.</p>
-        <button id="cancelar-restauracao-btn" class="cancelar">Cancelar</button>
-        <button id="confirmar-restauracao-btn" class="confirmar">Sim</button>
-    </div>
-</div>
+        </div>
+        <div class="tab-content" id="reserves">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 class="card-title" style="margin: 0;">Minhas Reservas</h3>
+                    <button class="btn" onclick="openReserveModal()">+ Nova Reserva</button>
+                </div>
+                <div class="grid grid-2" id="reservesList"></div>
+            </div>
+            <div class="card" id="reserveDetailsCard" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 class="card-title" id="reserveDetailsTitle" style="margin: 0;"></h3>
+                    <div>
+                        <button class="btn btn-success" onclick="openDepositModal()">+ Depositar</button>
+                        <button class="btn btn-danger" onclick="openWithdrawModal()">- Sacar</button>
+                        <button class="btn btn-secondary" onclick="openGoalModal()">+ Meta</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" style="color: var(--success)" id="reserveCurrentAmount">R$ 0,00</div>
+                        <div class="stat-label">Valor Atual</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" style="color: var(--warning)" id="reserveGoalsTotal">R$ 0,00</div>
+                        <div class="stat-label">Total das Metas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="reserveAvailable">R$ 0,00</div>
+                        <div class="stat-label">Disponível</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="reserveGoalsCount">0</div>
+                        <div class="stat-label">Metas Ativas</div>
+                    </div>
+                </div>
+                <div class="grid grid-2" id="reserveGoalsList"></div>
+                <div class="card">
+                    <h3 class="card-title">Histórico de Movimentações</h3>
+                    <div class="transaction-list" id="reserveHistory"></div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="reports">
+            <div class="card">
+                <h3 class="card-title">Relatórios Detalhados</h3>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label class="form-label">Período do Relatório:</label>
+                        <select class="form-select" id="reportPeriod" onchange="generateReport()">
+                            <option value="thisMonth">Este Mês</option>
+                            <option value="lastMonth">Mês Passado</option>
+                            <option value="thisYear">Este Ano</option>
+                            <option value="lastYear">Ano Passado</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="reportContent"></div>
+            </div>
+        </div>
+        <div class="tab-content" id="settings">
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3 class="card-title">Backup e Restauração</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        Faça backup dos seus dados ou restaure de um backup anterior.
+                    </p>
+                    <button class="btn btn-secondary" onclick="exportData()">📥 Exportar Dados</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Importar Dados</button>
+                    <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+                    <button class="btn btn-danger" onclick="resetAllData()">🗑️ Limpar Todos os Dados</button>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Sobre o MixFinance Pro</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        O MixFinance Pro é um sistema completo de gestão financeira pessoal desenvolvido para ajudar você a controlar suas finanças de forma inteligente e eficiente. Com recursos avançados de categorização, análise de gastos, reservas inteligentes e metas automáticas, você tem total controle sobre seu dinheiro.
+                    </p>
+                    <div style="margin-bottom: 1rem;">
+                        <h4>Recursos Principais:</h4>
+                        <ul style="color: var(--text-secondary); margin-left: 1.5rem;">
+                            <li>Controle de receitas e despesas</li>
+                            <li>Categorização inteligente</li>
+                            <li>Gráficos e relatórios detalhados</li>
+                            <li>Sistema de reservas com metas automáticas</li>
+                            <li>Backup e restauração de dados</li>
+                        </ul>
+                    </div>
+                    <p><strong>Versão:</strong> 3.0</p>
+                    <p><strong>Desenvolvido com:</strong> ❤️ e JavaScript</p>
+                    <p><strong>Última atualização:</strong> Maio/2025</p>
+                </div>
+            </div>
+        </div>
     </main>
-
-    <script src="scripts.js"></script>
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="transactionModalTitle">Nova Transação</h3>
+                <button class="close-btn" onclick="closeModal('transactionModal')">&times;</button>
+            </div>
+            <form onsubmit="saveTransaction(event)">
+                <div class="form-group">
+                    <label class="form-label">Valor</label>
+                    <input type="number" step="0.01" class="form-input" id="transactionAmount" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <input type="text" class="form-input" id="transactionDescription" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Categoria</label>
+                    <select class="form-select" id="transactionCategory" required></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data</label>
+                    <input type="date" class="form-input" id="transactionDate" required>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('transactionModal')">Cancelar</button>
+                    <button type="submit" class="btn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Nova Categoria</h3>
+                <button class="close-btn" onclick="closeModal('categoryModal')">&times;</button>
+            </div>
+            <form onsubmit="saveCategory(event)">
+                <div class="form-group">
+                    <label class="form-label">Nome</label>
+                    <input type="text" class="form-input" id="categoryName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo</label>
+                    <select class="form-select" id="categoryType" required>
+                        <option value="expense">Despesa</option>
+                        <option value="income">Receita</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cor</label>
+                    <input type="color" class="form-input" id="categoryColor" value="#6366f1">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('categoryModal')">Cancelar</button>
+                    <button type="submit" class="btn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="reserveModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="reserveModalTitle">Nova Reserva</h3>
+                <button class="close-btn" onclick="closeModal('reserveModal')">&times;</button>
+            </div>
+            <form onsubmit="saveReserve(event)">
+                <div class="form-group">
+                    <label class="form-label">Nome</label>
+                    <input type="text" class="form-input" id="reserveName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea class="form-input" id="reserveDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Valor Inicial</label>
+                    <input type="number" step="0.01" class="form-input" id="reserveInitialAmount" value="0">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('reserveModal')">Cancelar</button>
+                    <button type="submit" class="btn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="goalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="goalModalTitle">Nova Meta</h3>
+                <button class="close-btn" onclick="closeModal('goalModal')">&times;</button>
+            </div>
+            <form onsubmit="saveGoal(event)">
+                <div class="form-group">
+                    <label class="form-label">Nome da Meta</label>
+                    <input type="text" class="form-input" id="goalName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Valor Alvo</label>
+                    <input type="number" step="0.01" class="form-input" id="goalTarget" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data Limite</label>
+                    <input type="date" class="form-input" id="goalDeadline">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('goalModal')">Cancelar</button>
+                    <button type="submit" class="btn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Depositar na Reserva</h3>
+                <button class="close-btn" onclick="closeModal('depositModal')">&times;</button>
+            </div>
+            <form onsubmit="makeDeposit(event)">
+                <div class="form-group">
+                    <label class="form-label">Valor</label>
+                    <input type="number" step="0.01" class="form-input" id="depositAmount" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <input type="text" class="form-input" id="depositDescription" placeholder="Opcional">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('depositModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Depositar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Sacar da Reserva</h3>
+                <button class="close-btn" onclick="closeModal('withdrawModal')">&times;</button>
+            </div>
+            <form onsubmit="makeWithdraw(event)">
+                <div class="form-group">
+                    <label class="form-label">Valor</label>
+                    <input type="number" step="0.01" class="form-input" id="withdrawAmount" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <input type="text" class="form-input" id="withdrawDescription" placeholder="Opcional">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('withdrawModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Sacar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
